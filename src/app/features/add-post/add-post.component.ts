@@ -121,16 +121,37 @@ export class AddPostComponent implements OnInit {
           this.Toast.fire({ icon: 'success', title: 'Catégorie supprimée' });
           this.postForm.patchValue({ categoryId: '' });
           this.loadCategories();
+        },
+        // 🚀 We catch the backend error here and show the alert!
+        error: (err) => {
+          Swal.fire({
+            icon: 'error',
+            title: 'Suppression impossible',
+            text: 'Cette catégorie contient des articles. Veuillez d\'abord modifier ou supprimer ces articles.',
+            confirmButtonColor: '#0d6efd'
+          });
+          console.error('Erreur lors de la suppression de la catégorie :', err);
         }
       });
     }
   }
 
+  // Protège la catégorie par défaut
+  isDefaultCategorySelected(): boolean {
+    const categoryId = this.postForm.get('categoryId')?.value;
+    if (!categoryId) return false;
+    
+    const currentCat = this.categories.find(c => c.id === categoryId);
+    return currentCat?.name.toLowerCase() === 'sans catégorie';
+  }
+
+  // Gestion des erreurs UI du formulaire
   isInvalid(controlName: string): boolean {
     const control = this.postForm.get(controlName);
     return !!(control && control.invalid && (control.dirty || control.touched));
   }
 
+  // Soumission de l'article
   onSubmit() {
     if (this.postForm.invalid) {
       this.Toast.fire({ icon: 'warning', title: 'Please review your post' });
@@ -149,5 +170,4 @@ export class AddPostComponent implements OnInit {
       }
     });
   }
-  
 }
