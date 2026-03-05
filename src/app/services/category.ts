@@ -15,7 +15,7 @@ export class CategoryService {
     return this.http.get<Category[]>(this.resourceUrl);
   }
 
-  //  envoie directement la chaîne de caractères (le nom)
+  //  envoie directement la chaîne 
   createCategory(name: string): Observable<Category> {
     return this.http.post<Category>(this.resourceUrl, name);
   }

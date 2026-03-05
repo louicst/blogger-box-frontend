@@ -1,25 +1,23 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { FormsModule } from '@angular/forms'; // 🚀 REQUIRED FOR SEARCH INPUTS
+import { FormsModule } from '@angular/forms'; 
 import { PostService } from '../../services/post';
-import { CategoryService } from '../../services/category'; // 🚀 TO GET CATEGORIES
+import { CategoryService } from '../../services/category'; 
 import { Post, Category } from '../../models/post.model';
 import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule], // 👈 Added FormsModule
+  imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './home.component.html'
 })
 export class HomeComponent implements OnInit {
-  // 🚀 Keep original data safe, display the filtered data
   allPosts: Post[] = [];
   filteredPosts: Post[] = [];
   categories: Category[] = [];
 
-  // 🚀 Filter States
   searchTerm: string = '';
   selectedCategoryId: string = '';
   sortBy: string = 'newest';
@@ -37,7 +35,7 @@ export class HomeComponent implements OnInit {
   loadPosts(): void {
     this.postService.getPosts().subscribe((data) => {
       this.allPosts = data;
-      this.applyFilters(); // Apply immediately when data loads
+      this.applyFilters();
     });
   }
 
@@ -45,7 +43,6 @@ export class HomeComponent implements OnInit {
     this.categoryService.getCategories().subscribe(data => this.categories = data);
   }
 
-  // 🧠 The magic function that handles Search, Filter, and Sort all at once!
   applyFilters(): void {
     let tempPosts = [...this.allPosts];
 
@@ -75,11 +72,10 @@ export class HomeComponent implements OnInit {
       return 0;
     });
 
-    // Update the UI
     this.filteredPosts = tempPosts;
   }
 
-  // 🗑️ Delete logic
+  //  Delete 
   async deletePost(postId: string) {
     const result = await Swal.fire({
       title: 'Delete this post?',
@@ -95,7 +91,7 @@ export class HomeComponent implements OnInit {
       this.postService.deletePost(postId).subscribe({
         next: () => {
           Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Post deleted', showConfirmButton: false, timer: 3000 });
-          this.loadPosts(); // Refresh the grid
+          this.loadPosts();
         },
         error: (err) => {
           Swal.fire('Error', 'Could not delete the post.', 'error');

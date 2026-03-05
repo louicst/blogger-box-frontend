@@ -7,6 +7,6 @@ export const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'add-post', component: AddPostComponent },
   { path: 'edit-post/:id', component: AddPostComponent },
-  { path: 'post/:id', component: PostDetailComponent }, // 🚀 La nouvelle route pour lire l'article
+  { path: 'post/:id', component: PostDetailComponent }, 
   { path: '**', redirectTo: '' }
 ];

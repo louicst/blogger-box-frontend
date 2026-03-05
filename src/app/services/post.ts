@@ -15,7 +15,6 @@ export class PostService {
     return this.http.get<Post[]>(this.resourceUrl);
   }
 
-  // 🚀 The missing method: Get a single post by ID
   getPostById(id: string): Observable<Post> {
     return this.http.get<Post>(`${this.resourceUrl}/${id}`);
   }
@@ -25,12 +24,12 @@ export class PostService {
     return this.http.post<Post>(this.resourceUrl, post);
   }
 
-  // 🛠️ Update an existing post
+  //  Update an existing post
   updatePost(id: string, post: any): Observable<Post> {
     return this.http.put<Post>(`${this.resourceUrl}/${id}`, post);
   }
 
-  // 🗑️ Delete a post
+  // Delete a post
   deletePost(id: string): Observable<void> {
     return this.http.delete<void>(`${this.resourceUrl}/${id}`);
   }

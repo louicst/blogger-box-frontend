@@ -12,8 +12,7 @@ export interface Post {
 }
 
 /**
- * On utilise Omit pour retirer les champs gérés par le Backend.
- * On ajoute le champ 'categoryId' (UUID) pour correspondre au Record Java.
+ * On utilise Omit pour retirer les champs gérés par le be
  */
 export type CreatePostRequest = Omit<Post, 'id' | 'createdDate' | 'category'> & { 
   categoryId: string 

@@ -8,7 +8,7 @@ import { Post } from '../../models/post.model';
   selector: 'app-post-detail',
   standalone: true,
   imports: [CommonModule, RouterModule],
-  templateUrl: './post-detail.html' // 🚀 Updated path to match your exact file name
+  templateUrl: './post-detail.html' 
 })
 export class PostDetailComponent implements OnInit {
   post: Post | null = null;

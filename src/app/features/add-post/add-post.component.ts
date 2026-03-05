@@ -17,7 +17,7 @@ export class AddPostComponent implements OnInit {
   categories: Category[] = [];
   postForm!: FormGroup;
 
-  // 🚀 New properties to track Edit Mode
+  // edit ou create
   isEditMode = false;
   postId: string | null = null;
 
@@ -38,29 +38,26 @@ export class AddPostComponent implements OnInit {
     private postService: PostService,
     private categoryService: CategoryService,
     private router: Router,
-    private route: ActivatedRoute // 👈 Inject ActivatedRoute
+    private route: ActivatedRoute // 
   ) {}
 
   ngOnInit(): void {
-    // 1. Initialize empty form
+    // commence vide
     this.postForm = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(150)]],
       categoryId: ['', [Validators.required]],
       content: ['', [Validators.required, Validators.maxLength(2500)]]
     });
 
-    // 2. Load categories for the dropdown
     this.loadCategories();
 
-    // 3. 🚀 Check if there's an ID in the URL for Edit Mode
     this.postId = this.route.snapshot.paramMap.get('id');
     if (this.postId) {
       this.isEditMode = true;
-      // Fetch the existing post and patch the form values
       this.postService.getPostById(this.postId).subscribe(post => {
         this.postForm.patchValue({
           title: post.title,
-          categoryId: post.category?.id, // Assuming backend sends nested category object
+          categoryId: post.category?.id, 
           content: post.content
         });
       });
@@ -156,7 +153,7 @@ export class AddPostComponent implements OnInit {
     }
   }
 
-  // Protège la catégorie par défaut
+  // Protège "sans catégorie" (au final j'ai pas fais ca)
   isDefaultCategorySelected(): boolean {
     const categoryId = this.postForm.get('categoryId')?.value;
     if (!categoryId) return false;
@@ -165,13 +162,12 @@ export class AddPostComponent implements OnInit {
     return currentCat?.name.toLowerCase() === 'sans catégorie';
   }
 
-  // Gestion des erreurs UI du formulaire
   isInvalid(controlName: string): boolean {
     const control = this.postForm.get(controlName);
     return !!(control && control.invalid && (control.dirty || control.touched));
   }
 
-  // 🚀 Soumission de l'article (Create OR Update)
+  //  Soumission de l'article (Create/update)
   onSubmit() {
     if (this.postForm.invalid) {
       this.Toast.fire({ icon: 'warning', title: 'Please review your post' });
@@ -180,7 +176,7 @@ export class AddPostComponent implements OnInit {
     }
 
     if (this.isEditMode && this.postId) {
-      // UPDATE existing post
+      // UPDATE 
       this.postService.updatePost(this.postId, this.postForm.value).subscribe({
         next: () => {
           this.Toast.fire({ icon: 'success', title: 'Post Updated Successfully' });
@@ -192,7 +188,7 @@ export class AddPostComponent implements OnInit {
         }
       });
     } else {
-      // CREATE new post
+      // CREATE 
       this.postService.createPost(this.postForm.value).subscribe({
         next: () => {
           this.Toast.fire({ icon: 'success', title: 'Post Submitted Successfully' });
