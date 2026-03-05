@@ -27,6 +27,10 @@
           <button class="btn btn-sm btn-outline-secondary" [routerLink]="['/edit-post', post.id]" title="Edit">
             ✎
           </button>
+          
+          <button class="btn btn-sm btn-outline-danger" (click)="deletePost(post.id)" title="Delete">
+            ✕
+          </button>
         </div>
       </div>
 
