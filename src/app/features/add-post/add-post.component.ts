@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router'; // ActivatedRoute included
 import { PostService } from '../../services/post';
 import { CategoryService } from '../../services/category';
 import { Category } from '../../models/post.model';
@@ -16,6 +16,10 @@ import Swal from 'sweetalert2';
 export class AddPostComponent implements OnInit {
   categories: Category[] = [];
   postForm!: FormGroup;
+
+  // 🚀 New properties to track Edit Mode
+  isEditMode = false;
+  postId: string | null = null;
 
   private Toast = Swal.mixin({
     toast: true,
@@ -33,17 +37,34 @@ export class AddPostComponent implements OnInit {
     private fb: FormBuilder,
     private postService: PostService,
     private categoryService: CategoryService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute // 👈 Inject ActivatedRoute
   ) {}
 
   ngOnInit(): void {
+    // 1. Initialize empty form
     this.postForm = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(150)]],
       categoryId: ['', [Validators.required]],
       content: ['', [Validators.required, Validators.maxLength(2500)]]
     });
 
+    // 2. Load categories for the dropdown
     this.loadCategories();
+
+    // 3. 🚀 Check if there's an ID in the URL for Edit Mode
+    this.postId = this.route.snapshot.paramMap.get('id');
+    if (this.postId) {
+      this.isEditMode = true;
+      // Fetch the existing post and patch the form values
+      this.postService.getPostById(this.postId).subscribe(post => {
+        this.postForm.patchValue({
+          title: post.title,
+          categoryId: post.category?.id, // Assuming backend sends nested category object
+          content: post.content
+        });
+      });
+    }
   }
 
   private loadCategories(): void {
@@ -122,7 +143,6 @@ export class AddPostComponent implements OnInit {
           this.postForm.patchValue({ categoryId: '' });
           this.loadCategories();
         },
-        // 🚀 We catch the backend error here and show the alert!
         error: (err) => {
           Swal.fire({
             icon: 'error',
@@ -151,7 +171,7 @@ export class AddPostComponent implements OnInit {
     return !!(control && control.invalid && (control.dirty || control.touched));
   }
 
-  // Soumission de l'article
+  // 🚀 Soumission de l'article (Create OR Update)
   onSubmit() {
     if (this.postForm.invalid) {
       this.Toast.fire({ icon: 'warning', title: 'Please review your post' });
@@ -159,15 +179,30 @@ export class AddPostComponent implements OnInit {
       return;
     }
 
-    this.postService.createPost(this.postForm.value).subscribe({
-      next: () => {
-        this.Toast.fire({ icon: 'success', title: 'Post Submitted Successfully' });
-        this.router.navigate(['/']);
-      },
-      error: (err) => {
-        this.Toast.fire({ icon: 'error', title: 'An error occurred during creation' });
-        console.error(err);
-      }
-    });
+    if (this.isEditMode && this.postId) {
+      // UPDATE existing post
+      this.postService.updatePost(this.postId, this.postForm.value).subscribe({
+        next: () => {
+          this.Toast.fire({ icon: 'success', title: 'Post Updated Successfully' });
+          this.router.navigate(['/']);
+        },
+        error: (err) => {
+          this.Toast.fire({ icon: 'error', title: 'Error updating post' });
+          console.error(err);
+        }
+      });
+    } else {
+      // CREATE new post
+      this.postService.createPost(this.postForm.value).subscribe({
+        next: () => {
+          this.Toast.fire({ icon: 'success', title: 'Post Submitted Successfully' });
+          this.router.navigate(['/']);
+        },
+        error: (err) => {
+          this.Toast.fire({ icon: 'error', title: 'An error occurred during creation' });
+          console.error(err);
+        }
+      });
+    }
   }
 }

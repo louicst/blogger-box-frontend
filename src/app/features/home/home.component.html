@@ -1,14 +1,40 @@
-<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" *ngIf="posts.length > 0">
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" *ngIf="posts && posts.length > 0">
   <div class="col" *ngFor="let post of posts">
     <div class="card h-100 shadow-sm border-0">
       <div class="card-body">
-        <span class="badge bg-primary-subtle text-primary mb-2">{{ post.category?.name }}</span>
-        <h5 class="card-title fw-bold">{{ post.title }}</h5>
-        <p class="card-text text-secondary">{{ post.content | slice:0:150 }}...</p>
+        
+        <div class="mb-2">
+          <span class="badge bg-primary-subtle text-primary border border-primary-subtle">
+            {{ post.category ? post.category.name : 'Sans catégorie' }}
+          </span>
+        </div>
+        
+        <h5 class="card-title fw-bold text-dark">{{ post.title || 'Sans titre' }}</h5>
+        
+        <p class="card-text text-secondary">
+          {{ (post.content || '') | slice:0:150 }}
+          {{ post.content && post.content.length > 150 ? '...' : '' }}
+        </p>
       </div>
-      <div class="card-footer bg-transparent border-top-0 small text-muted">
-        Publié le {{ post.createdDate | date:'fullDate' }}
+      
+      <div class="card-footer bg-transparent border-top-0 pb-3 d-flex justify-content-between align-items-center">
+        <div class="text-muted small">
+          <i class="bi bi-calendar3 me-1"></i>
+          {{ post.createdDate | date:'shortDate' }}
+        </div>
+        
+        <div class="btn-group">
+          <button class="btn btn-sm btn-outline-secondary" [routerLink]="['/edit-post', post.id]" title="Edit">
+            ✎
+          </button>
+        </div>
       </div>
+
     </div>
   </div>
+</div>
+
+<div class="text-center py-5 text-muted" *ngIf="!posts || posts.length === 0">
+  <i class="bi bi-journal-text fs-1"></i>
+  <p class="mt-3">No posts available yet. Click "Write" to create one!</p>
 </div>

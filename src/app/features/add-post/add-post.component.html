@@ -1,7 +1,8 @@
 <div class="card shadow-sm border-0 mb-5 bg-white">
   <div class="card-body p-4">
     <h4 class="card-title fw-bold mb-4 text-dark border-bottom pb-3">
-      <i class="bi bi-pencil-square me-2"></i>Rédiger un article
+      <i class="bi bi-pencil-square me-2"></i>
+      {{ isEditMode ? 'Modifier l\'article' : 'Rédiger un article' }}
     </h4>
     
     <form [formGroup]="postForm" (ngSubmit)="onSubmit()">
@@ -31,12 +32,12 @@
             </button>
             
             <button class="btn btn-outline-secondary" type="button" (click)="editCurrentCategory()" 
-                    [disabled]="!postForm.get('categoryId')?.value" title="Modifier">
+                    [disabled]="!postForm.get('categoryId')?.value || isDefaultCategorySelected()" title="Modifier">
               <span style="font-size: 1rem; line-height: 1;">✎</span>
             </button>
 
             <button class="btn btn-outline-danger" type="button" (click)="deleteCurrentCategory()" 
-                    [disabled]="!postForm.get('categoryId')?.value" title="Supprimer">
+                    [disabled]="!postForm.get('categoryId')?.value || isDefaultCategorySelected()" title="Supprimer">
               <span style="font-size: 1rem; line-height: 1;">✕</span>
             </button>
           </div>
@@ -59,7 +60,7 @@
         <div class="col-12 text-end border-top pt-3">
           <a routerLink="/" class="btn btn-light me-2">Annuler</a>
           <button type="submit" class="btn btn-primary px-5 fw-bold" [disabled]="postForm.invalid">
-            Publier l'article
+            {{ isEditMode ? 'Mettre à jour' : 'Publier l\'article' }}
           </button>
         </div>
       </div>

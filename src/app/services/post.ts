@@ -2,29 +2,36 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { Post } from '../models/post.model';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class PostService {
-  // On utilise l'URL des environnements
   private resourceUrl = `${environment.apiUrl}/posts`;
 
   constructor(private http: HttpClient) {}
 
-  /**
-   * Session 05 : Récupérer tous les articles
-   * page d'accueil
-   */
-  getPosts(): Observable<any[]> {
-    return this.http.get<any[]>(this.resourceUrl);
+  // Get all posts
+  getPosts(): Observable<Post[]> {
+    return this.http.get<Post[]>(this.resourceUrl);
   }
 
-  /**
-   * Session 06 : Créer un nouvel article
-   * 'CreationPostRequest'
-   */
-  createPost(postData: { title: string, content: string, categoryId: string }): Observable<any> {
-    return this.http.post<any>(this.resourceUrl, postData);
+  // 🚀 The missing method: Get a single post by ID
+  getPostById(id: string): Observable<Post> {
+    return this.http.get<Post>(`${this.resourceUrl}/${id}`);
+  }
+
+  // Create a new post
+  createPost(post: any): Observable<Post> {
+    return this.http.post<Post>(this.resourceUrl, post);
+  }
+
+  // 🛠️ Update an existing post
+  updatePost(id: string, post: any): Observable<Post> {
+    return this.http.put<Post>(`${this.resourceUrl}/${id}`, post);
+  }
+
+  // 🗑️ Delete a post
+  deletePost(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.resourceUrl}/${id}`);
   }
 }
