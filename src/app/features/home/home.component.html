@@ -1,0 +1,14 @@
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" *ngIf="posts.length > 0">
+  <div class="col" *ngFor="let post of posts">
+    <div class="card h-100 shadow-sm border-0">
+      <div class="card-body">
+        <span class="badge bg-primary-subtle text-primary mb-2">{{ post.category?.name }}</span>
+        <h5 class="card-title fw-bold">{{ post.title }}</h5>
+        <p class="card-text text-secondary">{{ post.content | slice:0:150 }}...</p>
+      </div>
+      <div class="card-footer bg-transparent border-top-0 small text-muted">
+        Publié le {{ post.createdDate | date:'fullDate' }}
+      </div>
+    </div>
+  </div>
+</div>

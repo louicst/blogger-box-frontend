@@ -1,82 +1,17 @@
-<nav class="navbar navbar-dark bg-dark mb-4 shadow-sm">
+<nav class="navbar navbar-expand navbar-dark bg-dark mb-4 shadow-sm">
   <div class="container">
-    <a class="navbar-brand d-flex align-items-center" href="#">
+    <a class="navbar-brand d-flex align-items-center" routerLink="/">
       <span class="fs-3 fw-bold">Blogger Box</span>
     </a>
-    <span class="badge rounded-pill bg-light text-dark">
-      {{ posts?.length || 0 }} articles en ligne
-    </span>
+
+    <div class="ms-auto d-flex align-items-center gap-3">
+      <a routerLink="/add-post" class="btn btn-outline-light fw-bold">
+        <i class="bi bi-pencil-square me-2"></i>Write
+      </a>
+    </div>
   </div>
 </nav>
 
 <div class="container">
-  <div class="card shadow-sm border-0 mb-5 bg-light">
-    <div class="card-body p-4">
-      <h4 class="card-title fw-bold mb-4 text-dark">
-        <i class="bi bi-plus-circle me-2"></i>Publier un nouvel article
-      </h4>
-      
-      <form (ngSubmit)="onSubmit()" #postForm="ngForm">
-        <div class="row g-3">
-          <div class="col-md-8">
-            <label class="form-label small fw-bold text-muted text-uppercase">Titre de l'article</label>
-            <input type="text" name="title" class="form-control" placeholder="Entrez un titre accrocheur..." 
-                   [(ngModel)]="newPost.title" required>
-          </div>
-
-          <div class="col-md-4">
-            <label class="form-label small fw-bold text-muted text-uppercase">Catégorie</label>
-            <select name="categoryId" class="form-select" [(ngModel)]="newPost.categoryId" required>
-              <option value="" disabled selected>Choisir...</option>
-              <option *ngFor="let cat of categories" [value]="cat.id">
-                {{ cat.name }}
-              </option>
-            </select>
-          </div>
-
-          <div class="col-12">
-            <label class="form-label small fw-bold text-muted text-uppercase">Contenu de l'article</label>
-            <textarea name="content" class="form-control" rows="4" placeholder="Écrivez votre contenu ici..." 
-                      [(ngModel)]="newPost.content" required></textarea>
-          </div>
-
-          <div class="col-12 text-end">
-            <button type="submit" class="btn btn-primary px-5 fw-bold" [disabled]="!postForm.form.valid">
-              <i class="bi bi-send me-2"></i>Publier sur le blog
-            </button>
-          </div>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <hr class="mb-5 text-muted opacity-25">
-
-  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" *ngIf="posts && posts.length > 0">
-    <div class="col" *ngFor="let post of posts">
-      <div class="card h-100 shadow-sm border-0">
-        <div class="card-body">
-          <div class="mb-2">
-            <span class="badge bg-primary-subtle text-primary border border-primary-subtle">
-              {{ post.category?.name || 'Général' }}
-            </span>
-          </div>
-          
-          <h5 class="card-title fw-bold text-dark">{{ post.title || 'Sans titre' }}</h5>
-          
-          <p class="card-text text-secondary">
-            {{ (post.content || '') | slice:0:150 }}
-            {{ (post.content?.length > 150) ? '...' : '' }}
-          </p>
-        </div>
-        
-        <div class="card-footer bg-transparent border-top-0 pb-3">
-          <div class="d-flex align-items-center text-muted small">
-            <i class="bi bi-calendar3 me-2"></i>
-            Publié le {{ post.createdDate | date:'fullDate' }}
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  <router-outlet></router-outlet>
 </div>

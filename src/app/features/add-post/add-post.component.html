@@ -1,0 +1,18 @@
+<div class="card shadow-sm border-0 p-4 bg-light">
+  <h4 class="fw-bold mb-4">✍️ Publier un nouvel article</h4>
+  <form (ngSubmit)="onSubmit()">
+    <div class="mb-3">
+      <input type="text" name="title" class="form-control" placeholder="Titre" [(ngModel)]="newPost.title" required>
+    </div>
+    <div class="mb-3">
+      <select name="categoryId" class="form-select" [(ngModel)]="newPost.categoryId" required>
+        <option value="" disabled>Choisir une catégorie...</option>
+        <option *ngFor="let cat of categories" [value]="cat.id">{{ cat.name }}</option>
+      </select>
+    </div>
+    <div class="mb-3">
+      <textarea name="content" class="form-control" rows="5" placeholder="Contenu..." [(ngModel)]="newPost.content" required></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary w-100 fw-bold">Publier</button>
+  </form>
+</div>
