@@ -1,12 +1,30 @@
-import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { PostService } from './services/post';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
-export class App {
-  protected readonly title = signal('blogger-box-frontend');
+export class AppComponent implements OnInit {
+  posts: any[] = [];
+
+  constructor(private postService: PostService) {}
+
+  ngOnInit(): void {
+    console.log("🚀 Le moteur Angular a démarré !");
+    
+    this.postService.getPosts().subscribe({
+      next: (data: any[]) => {
+        console.log("✅ Données reçues avec succès :", data.length);
+        this.posts = data;
+      },
+      error: (err: any) => { 
+        console.error("❌ Erreur lors de l'appel API :", err);
+      }
+    });
+  }
 }
