@@ -10,8 +10,49 @@
 </nav>
 
 <div class="container">
+  <div class="card shadow-sm border-0 mb-5 bg-light">
+    <div class="card-body p-4">
+      <h4 class="card-title fw-bold mb-4 text-dark">
+        <i class="bi bi-plus-circle me-2"></i>Publier un nouvel article
+      </h4>
+      
+      <form (ngSubmit)="onSubmit()" #postForm="ngForm">
+        <div class="row g-3">
+          <div class="col-md-8">
+            <label class="form-label small fw-bold text-muted text-uppercase">Titre de l'article</label>
+            <input type="text" name="title" class="form-control" placeholder="Entrez un titre accrocheur..." 
+                   [(ngModel)]="newPost.title" required>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label small fw-bold text-muted text-uppercase">Catégorie</label>
+            <select name="categoryId" class="form-select" [(ngModel)]="newPost.categoryId" required>
+              <option value="" disabled selected>Choisir...</option>
+              <option *ngFor="let cat of categories" [value]="cat.id">
+                {{ cat.name }}
+              </option>
+            </select>
+          </div>
+
+          <div class="col-12">
+            <label class="form-label small fw-bold text-muted text-uppercase">Contenu de l'article</label>
+            <textarea name="content" class="form-control" rows="4" placeholder="Écrivez votre contenu ici..." 
+                      [(ngModel)]="newPost.content" required></textarea>
+          </div>
+
+          <div class="col-12 text-end">
+            <button type="submit" class="btn btn-primary px-5 fw-bold" [disabled]="!postForm.form.valid">
+              <i class="bi bi-send me-2"></i>Publier sur le blog
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <hr class="mb-5 text-muted opacity-25">
+
   <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" *ngIf="posts && posts.length > 0">
-    
     <div class="col" *ngFor="let post of posts">
       <div class="card h-100 shadow-sm border-0">
         <div class="card-body">
@@ -37,6 +78,5 @@
         </div>
       </div>
     </div>
-    
   </div>
 </div>
