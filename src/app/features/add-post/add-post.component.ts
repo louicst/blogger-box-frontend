@@ -5,7 +5,7 @@ import { Router, RouterModule } from '@angular/router';
 import { PostService } from '../../services/post';
 import { CategoryService } from '../../services/category';
 import { Category } from '../../models/post.model';
-import Swal from 'sweetalert2'; // 🚀 Import de SweetAlert2
+import Swal from 'sweetalert2'; 
 
 @Component({
   selector: 'app-add-post',
@@ -17,7 +17,6 @@ export class AddPostComponent implements OnInit {
   categories: Category[] = [];
   postForm!: FormGroup;
 
-  // Configuration du Mixin SweetAlert2 (Toast)
   private Toast = Swal.mixin({
     toast: true,
     position: 'top-end',
@@ -44,7 +43,87 @@ export class AddPostComponent implements OnInit {
       content: ['', [Validators.required, Validators.maxLength(2500)]]
     });
 
+    this.loadCategories();
+  }
+
+  private loadCategories(): void {
     this.categoryService.getCategories().subscribe(data => this.categories = data);
+  }
+
+  async openAddCategoryModal() {
+    const { value: name } = await Swal.fire({
+      title: 'Créer une nouvelle catégorie',
+      input: 'text',
+      inputLabel: 'Nom de la catégorie',
+      inputPlaceholder: 'Entrez le nom...',
+      showCancelButton: true,
+      confirmButtonColor: '#0d6efd',
+      cancelButtonColor: '#6c757d',
+      inputValidator: (value) => !value ? 'Le nom est obligatoire !' : null
+    });
+
+    if (name) {
+      this.categoryService.createCategory(name).subscribe({
+        next: (newCategory) => {
+          this.Toast.fire({ icon: 'success', title: 'Catégorie créée !' });
+          this.categoryService.getCategories().subscribe(data => {
+            this.categories = data;
+            this.postForm.patchValue({ categoryId: newCategory.id });
+          });
+        },
+        error: () => this.Toast.fire({ icon: 'error', title: 'Échec de la création' })
+      });
+    }
+  }
+
+  // MODIFIER la catégorie sélectionnée
+  async editCurrentCategory() {
+    const categoryId = this.postForm.get('categoryId')?.value;
+    const currentCat = this.categories.find(c => c.id === categoryId);
+
+    if (!currentCat) return;
+
+    const { value: newName } = await Swal.fire({
+      title: 'Modifier la catégorie',
+      input: 'text',
+      inputValue: currentCat.name,
+      showCancelButton: true,
+      inputValidator: (value) => !value ? 'Le nom ne peut pas être vide !' : null
+    });
+
+    if (newName && newName !== currentCat.name) {
+      this.categoryService.updateCategory(currentCat.id, newName).subscribe({
+        next: () => {
+          this.Toast.fire({ icon: 'success', title: 'Catégorie mise à jour !' });
+          this.loadCategories();
+        }
+      });
+    }
+  }
+
+  // SUPPRIMER la catégorie sélectionnée
+  async deleteCurrentCategory() {
+    const categoryId = this.postForm.get('categoryId')?.value;
+    if (!categoryId) return;
+
+    const result = await Swal.fire({
+      title: 'Supprimer la catégorie ?',
+      text: "Cette action est irréversible.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#dc3545',
+      confirmButtonText: 'Oui, supprimer'
+    });
+
+    if (result.isConfirmed) {
+      this.categoryService.deleteCategory(categoryId).subscribe({
+        next: () => {
+          this.Toast.fire({ icon: 'success', title: 'Catégorie supprimée' });
+          this.postForm.patchValue({ categoryId: '' });
+          this.loadCategories();
+        }
+      });
+    }
   }
 
   isInvalid(controlName: string): boolean {
@@ -53,35 +132,22 @@ export class AddPostComponent implements OnInit {
   }
 
   onSubmit() {
-    // ⚠️ CAS 1 : Le formulaire est invalide au moment de l'envoi
     if (this.postForm.invalid) {
-      this.Toast.fire({
-        icon: 'warning',
-        title: 'Please review your post'
-      });
-      // On marque tous les champs comme "touched" pour afficher les erreurs Bootstrap
+      this.Toast.fire({ icon: 'warning', title: 'Please review your post' });
       this.postForm.markAllAsTouched();
       return;
     }
 
-    // ✅ CAS 2 : Le formulaire est valide
     this.postService.createPost(this.postForm.value).subscribe({
       next: () => {
-        // Notification de succès
-        this.Toast.fire({
-          icon: 'success',
-          title: 'Post Submitted Successfully'
-        });
-        // Redirection vers l'accueil pour voir l'article
+        this.Toast.fire({ icon: 'success', title: 'Post Submitted Successfully' });
         this.router.navigate(['/']);
       },
       error: (err) => {
-        this.Toast.fire({
-          icon: 'error',
-          title: 'An error occurred during creation'
-        });
+        this.Toast.fire({ icon: 'error', title: 'An error occurred during creation' });
         console.error(err);
       }
     });
   }
+  
 }

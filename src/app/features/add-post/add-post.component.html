@@ -18,11 +18,29 @@
 
         <div class="col-md-4">
           <label class="form-label fw-bold text-secondary small">CATÉGORIE</label>
-          <select formControlName="categoryId" class="form-select" [class.is-invalid]="isInvalid('categoryId')">
-            <option value="" disabled selected>Choisir une catégorie...</option>
-            <option *ngFor="let cat of categories" [value]="cat.id">{{ cat.name }}</option>
-          </select>
-          <div class="invalid-feedback">Veuillez sélectionner une catégorie.</div>
+          <div class="input-group">
+            <select formControlName="categoryId" class="form-select" [class.is-invalid]="isInvalid('categoryId')">
+              <option value="" disabled selected>Choisir une catégorie...</option>
+              <option *ngFor="let cat of categories" [value]="cat.id">
+                {{ cat.name }}
+              </option>
+            </select>
+            
+            <button class="btn btn-outline-primary fw-bold" type="button" (click)="openAddCategoryModal()" title="Ajouter">
+              <span style="font-size: 1.2rem; line-height: 1;">+</span>
+            </button>
+            
+            <button class="btn btn-outline-secondary" type="button" (click)="editCurrentCategory()" 
+                    [disabled]="!postForm.get('categoryId')?.value" title="Modifier">
+              <span style="font-size: 1rem; line-height: 1;">✎</span>
+            </button>
+
+            <button class="btn btn-outline-danger" type="button" (click)="deleteCurrentCategory()" 
+                    [disabled]="!postForm.get('categoryId')?.value" title="Supprimer">
+              <span style="font-size: 1rem; line-height: 1;">✕</span>
+            </button>
+          </div>
+          <div class="invalid-feedback d-block" *ngIf="isInvalid('categoryId')">Veuillez sélectionner une catégorie.</div>
         </div>
 
         <div class="col-12">
