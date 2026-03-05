@@ -9,7 +9,11 @@
           </span>
         </div>
         
-        <h5 class="card-title fw-bold text-dark">{{ post.title || 'Sans titre' }}</h5>
+        <h5 class="card-title fw-bold">
+          <a [routerLink]="['/post', post.id]" class="text-dark text-decoration-none" style="cursor: pointer;">
+            {{ post.title || 'Sans titre' }}
+          </a>
+        </h5>
         
         <p class="card-text text-secondary">
           {{ (post.content || '') | slice:0:150 }}
